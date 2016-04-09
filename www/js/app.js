@@ -53,13 +53,18 @@ function checkMatches(){
       var match = new_matches[i];
       if(!containsObject(match,matches)){
         popUp("New Match!", match.firstname + " " + match.lastname)
-        return;
+        break;
       }  
+    }
+
+    for(var i = 0; i < new_matches.length; i++){
+      var match = new_matches[i];
+      matches.push(match);
     }
     
   });
 }
-setInterval(function(){checkMatches()},1000);
+setInterval(function(){checkMatches()},10000);
 
 
 
