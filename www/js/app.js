@@ -11,14 +11,28 @@ var matches = [];
 var ionicPopup;
 
 function updateCards($scope,cb){
+  console.log("updateCards");
 
   if(longitude && latitude){
+    console.log("has geo info");
 
     closeObjects(user.id, latitude, longitude, user.max_dist, function(res) {
+      console.log("got response");
         // res is array of art objects
         cardTypes = res.data;
         $scope.cards = [];
         cb($scope);
+
+        $scope.addCard = function(i) {
+            var newCard = cardTypes[i];
+            $scope.cards.push(angular.extend({}, newCard));
+        }
+
+        for (var i = 0; i < cardTypes.length; i++) {
+            $scope.addCard(i);
+        }
+
+        $scope.$apply();
     });
 
   } else {
@@ -64,7 +78,7 @@ function checkMatches(){
     
   });
 }
-setInterval(function(){checkMatches()},10000);
+//setInterval(function(){checkMatches()},10000);
 
 
 
@@ -90,15 +104,11 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 .controller('CardsCtrl', function($scope, $ionicPopup) {
     ionicPopup = $ionicPopup;
 
-    updateCards($scope, function($scope){
-            $scope.addCard = function(i) {
-            var newCard = cardTypes[i];
-            $scope.cards.push(angular.extend({}, newCard));
-        }
+    console.log("cardsctrl");
 
-        for (var i = 0; i < cardTypes.length; i++) {
-            $scope.addCard(i);
-        }
+    updateCards($scope, function($scope){
+      console.log("newcards");
+       
 
         $scope.cardSwipedLeft = function(index) {
             var card = cardTypes[index];
@@ -113,23 +123,27 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
         }
 
         $scope.onHold = function(index) {
-            console.log('Get info');
+            var card = cardTypes[i];
 
             var alertPopup = $ionicPopup.alert({
-                title: 'Details',
-                template: "Artist: Conny Walther <br> Location: Copenhagen"
+                title: card.title,
+                template: card.text
             });
             alertPopup.then(function(res) {
-                console.log('Showing details');
+                //console.log('Showing details');
             });
         }
 
         $scope.cardDestroyed = function(index) {
             $scope.cards.splice(index, 1);
 
+            console.log("card cardDestroyed " + index);
+
             // no more cards!!
             if(index == 0){
-              updateCards($scope);
+              updateCards($scope, function(){
+                $scope.$apply();
+              });
             }
         }
         $scope.$apply();
