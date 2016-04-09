@@ -34,8 +34,8 @@ function rate(user_id,art_id,rating,callback){
 	api(call,callback);
 }
 
-function closeObjects(latitude,longitude,max_dist,callback){
-	var call = "objects/"+latitude+"/"+longitude+"/"+max_dist;
+function closeObjects(user_id,latitude,longitude,max_dist,callback){
+	var call = "objects/"+user_id+"/"+latitude+"/"+longitude+"/"+max_dist;
 	api(call,callback);
 }
 
