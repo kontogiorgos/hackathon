@@ -1,6 +1,6 @@
 "use strict";
 
-var baseurl = "http://127.0.0.1:5000/";
+var baseurl = "http://52.28.252.9/";
 
 function api(call, callback){
 	$.get({
