@@ -1,23 +1,92 @@
 var user = {
   "id": 1,
-  "name": "Aske Mottelson"
+  "name": "Aske Mottelson",
+  "max_dist": 5
 };
 
+var cardTypes;
+var longitude, latitude;
+var matches = [];
 
-function updateCards($scope){
-  var latitude = 55.678152;
-  var longitude = 12.564681;
-  var max_dist = 5;
+var ionicPopup;
 
-  closeObjects(user.id, latitude, longitude, max_dist, function(res) {
+function updateCards($scope,cb){
 
+  if(longitude && latitude){
 
+    closeObjects(user.id, latitude, longitude, user.max_dist, function(res) {
         // res is array of art objects
-        var cardTypes = res.data;
-
+        cardTypes = res.data;
         $scope.cards = [];
+        cb($scope);
+    });
 
-        $scope.addCard = function(i) {
+  } else {
+    // set the geo location
+    navigator.geolocation.getCurrentPosition(function(pos){
+      longitude = pos.coords.longitude;
+      latitude = pos.coords.latitude;
+      updateCards($scope,cb);
+    }); 
+  }
+}
+
+function popUp(title,msg){
+  var alertPopup = ionicPopup.alert({
+        title: title,
+        template: msg
+    });
+    alertPopup.then(function(res) {
+        //console.log('Showing details');
+    });
+}
+
+
+function checkMatches(){
+  console.log("checkMatches()");
+
+
+  myMatches(user.id, function(res){
+    var new_matches = res.data;
+
+    for(var i = 0; i < new_matches.length; i++){
+      var match = new_matches[i];
+      if(!containsObject(match,matches)){
+        popUp("New Match!", match.firstname + " " + match.lastname)
+        return;
+      }  
+    }
+    
+  });
+}
+setInterval(function(){checkMatches()},1000);
+
+
+
+
+// Ionic Starter App, v0.9.20
+// angular.module is a global place for creating, registering and retrieving Angular modules
+// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
+// the 2nd parameter is an array of 'requires'
+// 'ionic.contrib.ui.tinderCards' is found in ionic.tdcards.js
+angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
+
+.directive('noScroll', function() {
+    return {
+        restrict: 'A',
+        link: function($scope, $element, $attr) {
+            $element.on('touchmove', function(e) {
+                e.preventDefault();
+            });
+        }
+    }
+})
+
+.controller('CardsCtrl', function($scope, $ionicPopup) {
+    ionicPopup = $ionicPopup;
+
+    updateCards($scope, function($scope){
+            $scope.addCard = function(i) {
             var newCard = cardTypes[i];
             $scope.cards.push(angular.extend({}, newCard));
         }
@@ -27,11 +96,15 @@ function updateCards($scope){
         }
 
         $scope.cardSwipedLeft = function(index) {
-            //rate(user.id,)
+            var card = cardTypes[index];
+            // NO
+            rate(user.id,card.id,0);
         }
 
         $scope.cardSwipedRight = function(index) {
-            console.log('Right swipe');
+            var card = cardTypes[index];
+            // NO
+            rate(user.id,card.id,1);
         }
 
         $scope.onHold = function(index) {
@@ -48,45 +121,14 @@ function updateCards($scope){
 
         $scope.cardDestroyed = function(index) {
             $scope.cards.splice(index, 1);
+
+            // no more cards!!
             if(index == 0){
               updateCards($scope);
             }
         }
         $scope.$apply();
     });
-}
-
-
-// Ionic Starter App, v0.9.20
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'ionic.contrib.ui.tinderCards' is found in ionic.tdcards.js
-angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
-
-
-
-.directive('noScroll', function() {
-    return {
-        restrict: 'A',
-        link: function($scope, $element, $attr) {
-            $element.on('touchmove', function(e) {
-                e.preventDefault();
-            });
-        }
-    }
-})
-
-.controller('CardsCtrl', function($scope, $ionicPopup) {
-    //     var cardTypes = [
-    // { image: 'img/img1.jpg', title: 'Klods med søjler'},
-    // { image: 'img/img2.jpg', title: 'Klods med sort og hvid klump'},
-    // { image: 'img/img3.jpg', title: 'Klods med klumper og kugler'},
-    //     ];
-
-
-
-    updateCards($scope);
 
 
 })
@@ -191,3 +233,4 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
         }
     };
 });
+
