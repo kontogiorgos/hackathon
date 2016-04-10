@@ -1,7 +1,7 @@
 var user = {
-  "id": 1,
-  "name": "Aske Mottelson",
-  "max_dist": 5
+  id: 1,
+  name: "",
+  dist: 5
 };
 
 var cardTypes;
@@ -11,17 +11,15 @@ var matches = [];
 var ionicPopup;
 
 function updateCards($scope,cb){
-  console.log("updateCards");
 
   if(longitude && latitude){
-    console.log("has geo info");
 
-    closeObjects(user.id, latitude, longitude, user.max_dist, function(res) {
-      console.log("got response");
+
+    closeObjects(user.id, latitude, longitude, user.dist, function(res) {
         // res is array of art objects
         cardTypes = res.data;
         $scope.cards = [];
-        cb($scope);
+        cb($scope);        
 
         $scope.addCard = function(i) {
             var newCard = cardTypes[i];
@@ -59,14 +57,13 @@ function popUp(title,msg){
 function checkMatches(){
   console.log("checkMatches()");
 
-
   myMatches(user.id, function(res){
     var new_matches = res.data;
 
     for(var i = 0; i < new_matches.length; i++){
       var match = new_matches[i];
       if(!containsObject(match,matches)){
-        popUp("New Match!", match.firstname + " " + match.lastname)
+        popUp("New Match!", match.firstname + " " + match.lastname);
         break;
       }  
     }
@@ -78,7 +75,7 @@ function checkMatches(){
     
   });
 }
-//setInterval(function(){checkMatches()},10000);
+setInterval(function(){checkMatches()},10000);
 
 
 
@@ -104,11 +101,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 .controller('CardsCtrl', function($scope, $ionicPopup) {
     ionicPopup = $ionicPopup;
 
-    console.log("cardsctrl");
-
     updateCards($scope, function($scope){
-      console.log("newcards");
-       
 
         $scope.cardSwipedLeft = function(index) {
             var card = cardTypes[index];
@@ -123,11 +116,15 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
         }
 
         $scope.onHold = function(index) {
-            var card = cardTypes[i];
+            var card = cardTypes[index];
+
+
+
+            var text = (typeof card.text == 'undefined') ? "" : card.text.substring(0,400);
 
             var alertPopup = $ionicPopup.alert({
                 title: card.title,
-                template: card.text
+                template: card.primaryMaker + "<br>" + card.displayDate + "<br>" + card.classification + "<br>" + card.address + " (" + card.region + ")" + "<br>" + text
             });
             alertPopup.then(function(res) {
                 //console.log('Showing details');
@@ -136,8 +133,6 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
         $scope.cardDestroyed = function(index) {
             $scope.cards.splice(index, 1);
-
-            console.log("card cardDestroyed " + index);
 
             // no more cards!!
             if(index == 0){
@@ -190,30 +185,21 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
             }
         })
 
-    $urlRouterProvider.otherwise("/event/home");
+    $urlRouterProvider.otherwise("/event/check-in");
+
 })
 
+
+
 .controller('MainCtrl', function($scope, $ionicSideMenuDelegate) {
-    $scope.attendees = [{
-        firstname: 'Nicolas',
-        lastname: 'Cage'
-    }, {
-        firstname: 'Jean-Claude',
-        lastname: 'Van Damme'
-    }, {
-        firstname: 'Keanu',
-        lastname: 'Reeves'
-    }, {
-        firstname: 'Steven',
-        lastname: 'Seagal'
-    }];
+
 
     $scope.toggleLeft = function() {
         $ionicSideMenuDelegate.toggleLeft();
     };
 })
 
-.controller('CheckinCtrl', function($scope) {
+.controller('CheckinCtrl', function($scope, $location) {
     $scope.showForm = true;
 
     $scope.shirtSizes = [{
@@ -229,12 +215,26 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
     $scope.attendee = {};
     $scope.submit = function() {
-        if (!$scope.attendee.firstname) {
+
+        var firstname = $scope.attendee.firstname;
+        var lastname = $scope.attendee.lastname;
+        var max_dist = $scope.attendee.shirtSize;
+
+        if(firstname && lastname && max_dist){
+
+          createUser(25,0,firstname,lastname,max_dist, function(res){
+
+            user = res.data;
+            //$urlRouterProvider.otherwise("/event/home");
+            $location.path("/event/home");
+            $scope.$apply();
+            
+          });
+        } else {
             alert('Info required');
-            return;
         }
-        $scope.showForm = false;
-        $scope.attendees.push($scope.attendee);
+
+        //$scope.showForm = false;
     };
 
 })
@@ -243,13 +243,13 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
     $scope.activity = [];
     $scope.arrivedChange = function(attendee) {
-        var msg = attendee.firstname + ' ' + attendee.lastname;
-        msg += (!attendee.arrived ? ' has arrived, ' : ' just left, ');
-        msg += new Date().getMilliseconds();
-        $scope.activity.push(msg);
-        if ($scope.activity.length > 3) {
-            $scope.activity.splice(0, 1);
-        }
+        // var msg = attendee.firstname + ' ' + attendee.lastname;
+        // msg += (!attendee.arrived ? ' has arrived, ' : ' just left, ');
+        // msg += new Date().getMilliseconds();
+        // $scope.activity.push(msg);
+        // if ($scope.activity.length > 3) {
+        //     $scope.activity.splice(0, 1);
+        // }
     };
 });
 

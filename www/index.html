@@ -70,6 +70,46 @@
       </ion-side-menus>
     </script>
 
+    <script id="templates/check-in.html" type="text/ng-template">
+      <ion-view view-title="Profile">
+        <ion-content>
+          <form class="list" ng-show="showForm">
+            <div class="item item-divider">
+              Personal Info
+            </div>
+            <label class="item item-input">
+              <input type="text" placeholder="First Name" ng-model="attendee.firstname">
+            </label>
+            <label class="item item-input">
+              <input type="text" placeholder="Last Name" ng-model="attendee.lastname">
+            </label>
+<!--             <label class="item item-input">
+              <input type="text" placeholder="Gender" ng-model="attendee.gender">
+            </label>
+            <label class="item item-input">
+              <input type="text" placeholder="Age" ng-model="attendee.age">
+            </label> -->
+            <div class="item item-divider">
+              Max Distance to Art
+            </div>
+            <ion-radio ng-repeat="shirtSize in shirtSizes"
+                       ng-value="shirtSize.value"
+                       ng-model="attendee.shirtSize">
+              {{ shirtSize.text }}
+            </ion-radio>
+            <div class="padding">
+              <button class="button button-block" ng-click="submit()">Create User</button>
+            </div>
+          </form>
+
+          <div ng-hide="showForm">
+            <pre ng-bind="attendee | json"></pre>
+            <a href="#/event/home">View matches</a>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+
     <script id="templates/home.html" type="text/ng-template">
 
     <ion-pane ng-controller="CardsCtrl">
@@ -97,45 +137,7 @@
 
     </script>
 
-    <script id="templates/check-in.html" type="text/ng-template">
-      <ion-view view-title="Profile">
-        <ion-content>
-          <form class="list" ng-show="showForm">
-            <div class="item item-divider">
-              Personal Info
-            </div>
-            <label class="item item-input">
-              <input type="text" placeholder="First Name" ng-model="attendee.firstname">
-            </label>
-            <label class="item item-input">
-              <input type="text" placeholder="Last Name" ng-model="attendee.lastname">
-            </label>
-            <label class="item item-input">
-              <input type="text" placeholder="Gender" ng-model="attendee.gender">
-            </label>
-            <label class="item item-input">
-              <input type="text" placeholder="Age" ng-model="attendee.age">
-            </label>
-            <div class="item item-divider">
-              Distance
-            </div>
-            <ion-radio ng-repeat="shirtSize in shirtSizes"
-                       ng-value="shirtSize.value"
-                       ng-model="attendee.shirtSize">
-              {{ shirtSize.text }}
-            </ion-radio>
-            <div class="padding">
-              <button class="button button-block" ng-click="submit()">Update Info</button>
-            </div>
-          </form>
 
-          <div ng-hide="showForm">
-            <pre ng-bind="attendee | json"></pre>
-            <a href="#/event/attendees">View matches</a>
-          </div>
-        </ion-content>
-      </ion-view>
-    </script>
 
     <script id="templates/attendees.html" type="text/ng-template">
       <ion-view view-title="My matches">
