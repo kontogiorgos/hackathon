@@ -19,7 +19,7 @@ function updateCards($scope,cb){
         // res is array of art objects
         cardTypes = res.data;
         $scope.cards = [];
-        cb($scope);        
+        cb($scope);
 
         $scope.addCard = function(i) {
             var newCard = cardTypes[i];
@@ -39,7 +39,7 @@ function updateCards($scope,cb){
       longitude = pos.coords.longitude;
       latitude = pos.coords.latitude;
       updateCards($scope,cb);
-    }); 
+    });
   }
 }
 
@@ -65,14 +65,17 @@ function checkMatches(){
       if(!containsObject(match,matches)){
         popUp("New Match!", match.firstname + " " + match.lastname);
         break;
-      }  
+      }
     }
 
     for(var i = 0; i < new_matches.length; i++){
       var match = new_matches[i];
       matches.push(match);
+
     }
-    
+
+
+
   });
 }
 setInterval(function(){checkMatches()},10000);
@@ -228,7 +231,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
             //$urlRouterProvider.otherwise("/event/home");
             $location.path("/event/home");
             $scope.$apply();
-            
+
           });
         } else {
             alert('Info required');
@@ -241,6 +244,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
 .controller('AttendeesCtrl', function($scope) {
 
+  
     $scope.activity = [];
     $scope.arrivedChange = function(attendee) {
         // var msg = attendee.firstname + ' ' + attendee.lastname;
@@ -252,4 +256,3 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
         // }
     };
 });
-
