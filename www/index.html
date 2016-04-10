@@ -141,22 +141,23 @@
 
     <script id="templates/attendees.html" type="text/ng-template">
       <ion-view view-title="My matches">
-        <ion-content>
-          <div class="list">
-            <ion-toggle ng-repeat="attendee in attendees | orderBy:'firstname' | orderBy:'lastname'"
-                        ng-model="attendee.arrived"
-                        ng-change="arrivedChange(attendee)">
-              {{ attendee.firstname }}
-              {{ attendee.lastname }}
-            </ion-toggle>
-            <div class="item item-divider">
-              My previous matches
-            </div>
-            <div class="item" ng-repeat="msg in activity">
-              {{ msg }}
-            </div>
-          </div>
-        </ion-content>
+
+      <div id="attendees" class="list">
+
+      <a class="item item-avatar" href="#">
+      <img src="img/user.png">
+      <h2>Aske Mottelson</h2>
+      <p>Hacking our art since 2016</p>
+      </a>
+
+      <a class="item item-avatar" href="#">
+      <img src="img/user.png">
+      <h2>Demosthenes Kontogiorgos</h2>
+      <p>Hacking our art since 2016</p>
+      </a>
+
+    </div>
+
       </ion-view>
     </script>
 
