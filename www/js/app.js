@@ -241,6 +241,9 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
 
 .controller('AttendeesCtrl', function($scope) {
 
+
+
+
     $scope.activity = [];
     $scope.arrivedChange = function(attendee) {
         // var msg = attendee.firstname + ' ' + attendee.lastname;
