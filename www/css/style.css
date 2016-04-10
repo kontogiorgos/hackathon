@@ -38,6 +38,10 @@ td-card img {
     border-radius: 6px;
 }
 
+#attendees{
+    margin-top: 44px;
+}
+
 /* Overlay styling*/
 
 .overlayBox {
